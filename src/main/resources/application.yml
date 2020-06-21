@@ -1,0 +1,27 @@
+#default port
+server:
+  port: 8808
+
+#mysql and druid
+spring:
+  datasource:
+    username: root
+    password: 154954264
+    url: jdbc:mysql://localhost:3306/blogtables?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&useSSL=false
+    #url: jdbc:mysql://47.115.55.12:3306/blogtables?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&useSSL=false
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#mail
+  mail:
+    host: smtp.qq.com
+    username: 154954264@qq.com
+    password: mbcmmzxnmezucbdg
+    default-encoding: utf-8
+
+#mybatis
+mybatis:
+  type-aliases-package: com.hjx.blog_backstage.Entitys
+  mapper-locations: classpath:mappers/*.xml
+logging:
+  config: classpath:logback-boot.xml
+
+email: 154954264

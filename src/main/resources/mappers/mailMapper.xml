@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjx.blog_backstage.Mappers.mailMapper">
+    <insert id="sendMail" parameterType="Mail">
+        insert into mail(sendAccount, sendEmail, advises, date, isReply) values(#{sendAccount}, #{sendEmail}, #{advises}, #{date}, #{isReply})
+    </insert>
+
+    <select id="getAdvise" resultType="Mail" parameterType="Integer">
+        select sendAccount, sendEmail, advises, date, isReply from mail
+        order by date desc
+        limit #{size}, 10
+    </select>
+
+    <update id="updateState">
+        update mail set isReply="1" where sendEmail=#{sendEmail}
+    </update>
+</mapper>

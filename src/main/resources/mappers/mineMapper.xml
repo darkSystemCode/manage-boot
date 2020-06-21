@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjx.blog_backstage.Mappers.mineMapper">
+    <insert id="setMine" parameterType="Mine">
+        insert into mineinfo(author, skill, introduce, avatar, backgAvatar)
+        values(#{author}, #{skill}, #{introduce}, #{avatar}, #{backgAvatar})
+    </insert>
+
+    <select id="getProfile" resultType="Mine" parameterType="String">
+        select mid, author, skill, introduce, avatar, backgAvatar
+        from mineinfo
+        where author=#{author}
+    </select>
+
+    <select id="getArticleTotal" resultType="Integer">
+        select count(*) from article
+    </select>
+
+    <select id="getOtherTotal" resultType="Mine">
+        SELECT SUM(readingNum) as readTotal, SUM(likeNum) as likeTotal from articleother
+    </select>
+</mapper>

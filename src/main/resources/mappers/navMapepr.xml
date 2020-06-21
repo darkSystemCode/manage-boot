@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjx.blog_backstage.Mappers.navMapper">
+    <insert id="setNav" parameterType="Nav">
+        insert into nav(title, path) values(#{title}, #{path})
+    </insert>
+
+    <select id="getNav" resultType="Nav">
+        select nid, title, path from nav
+    </select>
+
+    <insert id="setChildNav" parameterType="ChildNav">
+        insert into navchildren(navNumber, childTitle, childPath) values(#{navNumber}, #{childTitle}, #{childPath})
+    </insert>
+
+    <select id="getChildNav" parameterType="Integer" resultType="ChildNav">
+        select ncid, navNumber, childTitle, childPath from navchildren
+        where navNumber=#{parentIndex}
+    </select>
+
+    <select id="getHomeNav" resultType="Nav">
+        select nid, title, path
+        from nav
+    </select>
+
+    <select id="getHomeNavChild" resultType="ChildNav" parameterType="Integer">
+        select ncid, navNumber, childTitle, childPath
+        from navchildren
+    </select>
+
+</mapper>

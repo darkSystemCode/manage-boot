@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjx.blog_backstage.Mappers.ArticleMapper">
+    <insert id="setFEditor" parameterType="Article">
+        insert into article(articleNum, title, content, category, type, createTime)
+        values(#{articleNum},
+            #{title},
+            #{content},
+            #{category},
+            #{type},
+            #{createTime}
+        )
+    </insert>
+
+    <insert id="saveArtImg" parameterType="ArtImg">
+        insert into articleimg(articleNum, imgKey, img)
+        values(#{articleNum},
+            #{imgKey},
+            #{img})
+    </insert>
+
+    <update id="updateArticle" parameterType="Article">
+        update article
+        <set>
+            title=#{title},
+            content=#{content},
+            category=#{category},
+            type=#{type},
+            updateTime=#{updateTime}
+        </set>
+        where articleNum=#{articleNum}
+    </update>
+
+    <select id="existImg" parameterType="String" resultType="Integer">
+        select count(*) from articleimg where articleNum=#{articleNum}
+    </select>
+
+    <delete id="delArImg" parameterType="String">
+        delete from articleimg where articleNum=#{articleNum}
+    </delete>
+
+    <select id="getHomeArticle" resultType="Article">
+        SELECT
+            aid,
+            a.articleNum,
+            title,
+            content,
+            category,
+            type,
+            createTime,
+            b.readingNum,
+            b.likeNum
+        FROM
+        article a
+        left JOIN (
+            SELECT articleNum, readingNum, likeNum
+            FROM
+            articleother) b
+            ON a.articleNum = b.articleNum
+        <where>
+            <if test="category != null and category != ''">
+                a.category = #{category}
+            </if>
+        </where>
+        order by a.createTime desc
+        limit #{start}, #{end}
+    </select>
+
+    <select id="getArticleTotal" resultType="Integer">
+        select count(1) from article
+    </select>
+
+    <select id="getArticle" parameterType="String" resultType="Article">
+        select
+        articleNum,
+        title,
+        content,
+        category,
+        type,
+        createTime
+        from
+        article
+        where articleNum=#{articleNum}
+    </select>
+
+    <select id="getArticleImg" resultType="ArtImg">
+        select articleNum, imgKey, img
+        from
+        articleimg
+        where
+        articleNum=#{articleNum}
+    </select>
+
+    <select id="isArticleOther" resultType="Integer">
+        select count(1) from articleother where articleNum=#{articleNum}
+    </select>
+
+    <insert id="addReadNum" parameterType="ArticleOther">
+        insert into articleother(articleNum) values(#{articleNum})
+    </insert>
+
+    <update id="updateReadNum">
+        update articleother set readingNum = readingNum+1 where articleNum=#{articleNum}
+    </update>
+
+    <update id="addLike">
+        update articleother set likeNum = likeNum +1 where articleNum = #{articleNum}
+    </update>
+
+    <!--降序 得到排名热榜 按访问量排序 拿出前六条-->
+    <select id="hotOrder" resultType="Article">
+        select c.articleNum, readingNum, p.title, p.category, p.type
+        from
+            articleother c
+        LEFT JOIN
+            (SELECT articleNum, title, category, type FROM article) p
+        ON c.articleNum=p.articleNum
+        ORDER BY readingNum DESC
+        LIMIT 0,6
+    </select>
+
+    <select id="getAllArticle" resultType="Article">
+        select ap.articleNum, title, content, category, type, createTime, updateTime, ac.readingNum, ac.likeNum
+        from article ap
+        join (
+            select articleNum, readingNum, likeNum
+            from articleother
+        ) ac ON ap.articleNum=ac.articleNum
+        <where>
+            <if test="type != null and type != ''">
+                type=#{type}
+            </if>
+            <if test="articleNum != null and articleNum != ''">
+                and ap.articleNum=#{articleNum}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                and createTime &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and createTime &lt;= #{endTime}
+            </if>
+        </where>
+        order by createTime desc
+        limit #{currPage}, 10
+    </select>
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjx.blog_backstage.Mappers.userMapper">
+    <insert id="registerUser" parameterType="User">
+        insert into user(userID, username, password, email, state, createTime)
+        values(
+        <if test="userID != null and userID !=''">
+            #{userID},
+        </if>
+        <if test="username != null and username !=''">
+            #{username},
+        </if>
+        <if test="password != null and password !=''">
+            #{password},
+        </if>
+        <if test="email != null and email !=''">
+            #{email},
+        </if>
+        <if test="state != null and state !=''">
+            #{state},
+        </if>
+        <if test="createTime != null and createTime !=''">
+            #{createTime}
+        </if>
+        )
+    </insert>
+
+    <select id="toLogin" parameterType="User" resultType="User">
+        select userID, username, email, skill, introduce, avatar, background, state, createTime, updateTime
+        from user
+        <where>
+            username=#{username} and password=#{password} and state='1'
+        </where>
+    </select>
+
+    <select id="checkOldPassW" parameterType="String" resultType="String">
+        select password from user where password=#{oldPassword} limit 1
+    </select>
+
+    <update id="updatePassword" parameterType="User">
+        update user set password=#{newPassword} where username=#{username}
+    </update>
+</mapper>
