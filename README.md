@@ -4,27 +4,19 @@
 VUE 个人博客的后台接口
 
 #### 软件架构
-软件架构说明
+
+1.  使用Springboot+Mybatis做服务端业务
+2.  使用swagger框架输出API文档
+3.  使用JWT做登录token校验
+4.  使用shiro做账户权限校验
 
 
 #### 安装教程
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  导入maven环境包
+2.  运行主入口--BlogBackstageApplication.java
+3.  运行前端项目，并在浏览器预览
 
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
 
 
 #### 码云特技
