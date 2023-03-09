@@ -5,11 +5,17 @@ import com.hjx.blog_backstage.Entitys.ArticleOther;
 import com.hjx.blog_backstage.Services.ArticleService;
 import com.hjx.blog_backstage.Utils.Result;
 import com.hjx.blog_backstage.Utils.ResultUtil;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hjx
@@ -87,8 +93,8 @@ public class ArticleController {
      *
      * @params articleNum: 文章的索引编号
      */
-    @RequestMapping(value = "/getArticle", method = RequestMethod.GET, produces = "application/json")
-    public Result getArticle(String articleNum) {
+    @RequestMapping(value = "/getArticle/{articleNum}", method = RequestMethod.GET)
+    public Result getArticle(@PathVariable("articleNum") String articleNum) {
         if (articleNum != null && articleNum != "") {
             Article article = articleService.getArticle(articleNum);
             if (article != null) {
@@ -141,19 +147,48 @@ public class ArticleController {
      * 文章管理
      * 返回全部文章数据
      */
-    @RequestMapping(value = "/getAllArticle", method = RequestMethod.GET, produces = "application/json")
-    public Result getAllArticle(String type,
+    @RequestMapping(value = "/getArticle", method = RequestMethod.GET)
+    @ApiOperation(value = "获取文章，以分页形式展示")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "type", value = "文章类型", required = true),
+            @ApiImplicitParam(name = "articleNum", value = "文章编号", required = true),
+            @ApiImplicitParam(name = "startTime", value = "文章编写时间", required = true),
+            @ApiImplicitParam(name = "endTime", value = "文章结束时间", required = true),
+            @ApiImplicitParam(name = "page", value = "当前页页码", required = true, dataType = "int", example = "1"),
+            @ApiImplicitParam(name = "pageSize", value = "当前页展示记录数", required = true, dataType = "int", example = "6")
+    })
+    public Result getArticle(String type,
                                 String articleNum,
                                 String startTime,
                                 String endTime,
-                                Integer currPage) {
-        List<Article> allArticle = articleService.getAllArticle(type, articleNum, startTime, endTime, currPage);
+                                @RequestParam("page") Integer page,
+                                @RequestParam("pageSize") Integer pageSize) {
+        Map<String, Object> articleMap = articleService.getAllArticle(type, articleNum, startTime, endTime, page, pageSize);
 
-        if (allArticle != null) {
-            return result.success(allArticle);
-        } else {
-            return result.fail();
+        if (articleMap.size() > 0) {
+            return result.success(articleMap);
         }
+        return result.fail();
+    }
+
+    @GetMapping("/getNewArticle")
+    @ApiOperation(value = "获取最新发布的文章")
+    public Result getNewArticle(@RequestParam(value = "size", required = false) @ApiParam(name = "size" ,value = "查询记录条数", defaultValue = "6") Integer size) {
+        List<Article> newArticle = articleService.getNewArticle(size);
+        if(newArticle.size() > 0) {
+            return ResultUtil.success(newArticle);
+        }
+        return ResultUtil.fail();
+    }
+
+    @GetMapping("/getFeturedArticle")
+    @ApiOperation(value="获取精选文章")
+    public Result getFeturedArticle(@RequestParam("size") @ApiParam(name = "size" ,value = "查询记录条数") Integer size) {
+        List<Article> feturedArticle = articleService.getFeturedArticle(size);
+        if(feturedArticle.size() > 0) {
+            return ResultUtil.success(feturedArticle);
+        }
+        return ResultUtil.fail();
     }
 
 }

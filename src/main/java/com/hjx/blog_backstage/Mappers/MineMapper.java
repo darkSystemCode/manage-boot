@@ -4,7 +4,7 @@ import com.hjx.blog_backstage.Entitys.Mine;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface mineMapper {
+public interface MineMapper {
 
     public Integer setMine(Mine mine);
 

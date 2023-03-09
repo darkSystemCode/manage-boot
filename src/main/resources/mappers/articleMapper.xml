@@ -141,6 +141,36 @@
             </if>
         </where>
         order by createTime desc
-        limit #{currPage}, 10
+        limit #{page}, #{pageSize}
+    </select>
+
+    <select id="getNewArticle" resultType="Article" parameterType="Integer">
+        select articleNum,
+            title,
+            createTime
+        from
+            article
+        order by
+            createTime desc
+        limit 0,
+        <if test="size = null and size = ''">
+            6
+        </if>
+        <if test="size != null and size != ''">
+            #{size}
+        </if>
+    </select>
+
+    <select id="getFeturedArticle" resultType="Article">
+        select
+            title,
+            b.articleNum,
+            b.readingNum
+        from
+            article a
+            join ( select * from articleother ) b on a.articleNum = b.articleNum
+        order by
+            b.readingNum desc
+        limit 0,6
     </select>
 </mapper>

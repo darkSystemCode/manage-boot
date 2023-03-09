@@ -1,13 +1,10 @@
 package com.hjx.blog_backstage.Controllers;
 
 import com.hjx.blog_backstage.Entitys.Mail;
-import com.hjx.blog_backstage.Services.mailService;
+import com.hjx.blog_backstage.Services.MailService;
 import com.hjx.blog_backstage.Utils.Result;
 import com.hjx.blog_backstage.Utils.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-public class mailController {
+public class MailController {
     private static ResultUtil result = new ResultUtil();
     @Autowired
-    private mailService mailService;
+    private MailService mailService;
 
     @RequestMapping(value = "/sendMail", method = RequestMethod.POST)
     public Result sendMail(@RequestBody Mail mail) {

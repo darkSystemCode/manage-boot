@@ -1,7 +1,7 @@
 package com.hjx.blog_backstage.Services;
 
 import com.hjx.blog_backstage.Entitys.Mail;
-import com.hjx.blog_backstage.Mappers.mailMapper;
+import com.hjx.blog_backstage.Mappers.MailMapper;
 import com.hjx.blog_backstage.Utils.MailUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,9 +14,9 @@ import java.util.Calendar;
 import java.util.List;
 
 @Service
-public class mailService {
+public class MailService {
     @Autowired
-    private mailMapper mailMapper;
+    private MailMapper mailMapper;
 
     @Autowired
     private JavaMailSender javaMailSender;

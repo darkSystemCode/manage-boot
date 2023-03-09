@@ -37,11 +37,16 @@ public interface ArticleMapper {
                                        @Param(value = "articleNum") String articleNum,
                                        @Param(value = "startTime") String startTime,
                                        @Param(value = "endTime") String endTime,
-                                       @Param(value = "currPage") Integer currPage);
+                                       @Param(value = "page") Integer page,
+                                        Integer pageSize);
 
     public Integer updateArticle(Article article);
 
     public Integer existImg(String articleNum);
 
     public Integer delArImg(String articleNum);
+
+    List<Article> getNewArticle(@Param("size") Integer size);
+
+    List<Article> getFeturedArticle(Integer size);
 }

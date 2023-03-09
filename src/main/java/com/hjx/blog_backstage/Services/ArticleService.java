@@ -4,16 +4,13 @@ import com.hjx.blog_backstage.Entitys.ArtImg;
 import com.hjx.blog_backstage.Entitys.Article;
 import com.hjx.blog_backstage.Entitys.ArticleOther;
 import com.hjx.blog_backstage.Mappers.ArticleMapper;
-import com.hjx.blog_backstage.Utils.regularUtil;
+import com.hjx.blog_backstage.Utils.RegularUtil;
 import com.hjx.blog_backstage.Utils.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.lang.reflect.Array;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -28,7 +25,7 @@ public class ArticleService {
         article.setArticleNum(articleNum);
         article.setCreateTime(Calendar.getInstance().getTimeInMillis());
         //获得抽离img内容的HTML内容
-        Map<String, ArrayList<String>> map = regularUtil.getImgContent(article.getContent(), articleNum);
+        Map<String, ArrayList<String>> map = RegularUtil.getImgContent(article.getContent(), articleNum);
         article.setContent(map.get("content").get(0));
         //开启事务 二者皆要成功才返回
         Integer setFEditor = 0;
@@ -75,7 +72,7 @@ public class ArticleService {
     public List<Article> getHomeArticle(String category, Integer start, Integer end) {
         List<Article> article = articleMapper.getHomeArticle(category, start, end);
         for(Article item: article) {
-            String regResult = regularUtil.filterH(item.getContent());
+            String regResult = RegularUtil.filterH(item.getContent());
             item.setContent(regResult);
         }
         return article;
@@ -99,7 +96,7 @@ public class ArticleService {
             for (ArtImg item: articleImg) {
                 imgs.put(item.getImgKey(), item.getImg());
             }
-            String replaceContent = regularUtil.replaceImg(article.getContent(), imgs);
+            String replaceContent = RegularUtil.replaceImg(article.getContent(), imgs);
             article.setContent(replaceContent);
         }
         return article;
@@ -133,24 +130,29 @@ public class ArticleService {
         return article;
     }
 
-    public List<Article> getAllArticle(String type,
-                                       String articleNum,
-                                       String startTime,
-                                       String endTime,
-                                       Integer currPage) {
+    public Map<String, Object> getAllArticle(String type,
+                                             String articleNum,
+                                             String startTime,
+                                             String endTime,
+                                             Integer page,
+                                             Integer pageSize) {
         //每次查询数据总数
-        Integer size;
-        if(currPage == 0 || currPage == 1) {
-            size = 0;
+        if(page == 0 || page == 1) {
+            page = 0;
         } else {
-            size = currPage * 10;
+            page = (page - 1) * pageSize;
         }
-        List<Article> allArticle = articleMapper.getAllArticle(type, articleNum, startTime, endTime, size);
-        for (Article item: allArticle) {
-            String resultText = regularUtil.filterH(item.getContent());
+        List<Article> article = articleMapper.getAllArticle(type, articleNum, startTime, endTime, page, pageSize);
+        Integer articleTotal = articleMapper.getArticleTotal(); //得到文章总数
+        for (Article item: article) {
+            String resultText = RegularUtil.filterH(item.getContent());
             item.setContent(resultText);
         }
-        return allArticle;
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("article", article);
+        map.put("total", articleTotal);
+        map.put("currPage", (page / pageSize) + 1);
+        return map;
     }
 
     @Transactional
@@ -158,7 +160,7 @@ public class ArticleService {
         //修改时间
         long timeInMillis = Calendar.getInstance().getTimeInMillis();
         //抽离图片
-        Map<String, ArrayList<String>> imgContent = regularUtil.getImgContent(article.getContent(), article.getArticleNum());
+        Map<String, ArrayList<String>> imgContent = RegularUtil.getImgContent(article.getContent(), article.getArticleNum());
 
         article.setUpdateTime(timeInMillis);
         article.setCategory(article.getCategory().toLowerCase());
@@ -234,6 +236,14 @@ public class ArticleService {
             }
         }
         return 0;
+    }
+
+    public List<Article> getNewArticle(Integer size) {
+        return articleMapper.getNewArticle(size);
+    }
+
+    public List<Article> getFeturedArticle(Integer size) {
+        return articleMapper.getFeturedArticle(size);
     }
 }
 

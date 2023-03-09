@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.hjx.blog_backstage.Mappers.navMapper">
-    <insert id="setNav" parameterType="Nav">
-        insert into nav(title, path) values(#{title}, #{path})
+<mapper namespace="com.hjx.blog_backstage.Mappers.NavMapper">
+    <insert id="setNav" parameterType="Nav" useGeneratedKeys="true" keyProperty="nid"  keyColumn="nid">
+        insert into nav(title, path, navDesc) values(#{title}, #{path}, #{navDesc})
     </insert>
 
     <select id="getNav" resultType="Nav">
-        select nid, title, path from nav
+        select distinct nid, title, path, navDesc, if(b.navNumBer is not null, 'true', 'false') as hasChildren from nav a left join
+        (select navNumBer from childNav) b on a.nid = b.navNumBer order by a.nid
     </select>
 
-    <insert id="setChildNav" parameterType="ChildNav">
-        insert into navchildren(navNumber, childTitle, childPath) values(#{navNumber}, #{childTitle}, #{childPath})
+    <insert id="setChildNav" parameterType="ChildNav" useGeneratedKeys="true" keyProperty="ncid"  keyColumn="ncid">
+        insert into childNav(navNumber, title, path, navDesc) values(#{navNumber}, #{title}, #{path}, #{navDesc})
     </insert>
 
     <select id="getChildNav" parameterType="Integer" resultType="ChildNav">
-        select ncid, navNumber, childTitle, childPath from navchildren
+        select ncid, navNumber, title, path, navDesc from childNav
         where navNumber=#{parentIndex}
     </select>
 
@@ -25,7 +26,23 @@
 
     <select id="getHomeNavChild" resultType="ChildNav" parameterType="Integer">
         select ncid, navNumber, childTitle, childPath
-        from navchildren
+        from childNav
     </select>
+
+    <delete id="deleteParentNav" parameterType="Integer">
+        delete from nav where nid =#{id}
+    </delete>
+
+    <delete id="deleteChildNav" parameterType="Integer">
+        delete from childNav
+        <where>
+            <if test="id != null">
+                ncid = #{id}
+            </if>
+            <if test="parentId != null">
+                navNumBer = #{parentId}
+            </if>
+        </where>
+    </delete>
 
 </mapper>

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface mailMapper {
+public interface MailMapper {
 
     public Integer sendMail(Mail mail);
 

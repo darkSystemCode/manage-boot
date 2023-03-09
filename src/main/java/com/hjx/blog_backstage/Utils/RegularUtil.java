@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  * @since 2020-03-27
  * @author hjx
  */
-public class regularUtil {
+public class RegularUtil {
     private static Integer INDEX = 0;
     /**
      * 把富文本内容的img src内容抽离出来，单独存放到数据库中，并生成对应的图片索引到原文的src

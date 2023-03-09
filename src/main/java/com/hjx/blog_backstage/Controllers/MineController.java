@@ -1,7 +1,7 @@
 package com.hjx.blog_backstage.Controllers;
 
 import com.hjx.blog_backstage.Entitys.Mine;
-import com.hjx.blog_backstage.Services.mineService;
+import com.hjx.blog_backstage.Services.MineService;
 import com.hjx.blog_backstage.Utils.Result;
 import com.hjx.blog_backstage.Utils.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class mineController {
+public class MineController {
     private static ResultUtil result = new ResultUtil();
     @Autowired
-    private mineService mineService;
+    private MineService mineService;
 
     @RequestMapping(value = "/setMine", method = RequestMethod.POST, produces = "application/json")
     public Result setMine(@RequestBody Mine mine) {

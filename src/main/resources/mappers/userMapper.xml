@@ -1,6 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.hjx.blog_backstage.Mappers.userMapper">
+<mapper namespace="com.hjx.blog_backstage.Mappers.UserMapper">
+    <select id="getUserID" parameterType="String" resultType="User">
+        select uid,
+            userID,
+            username,
+            password,
+            email,
+            createTime,
+            updateTime,
+            state
+        from
+            user
+        where
+            userID=#{userID}
+    </select>
+
+    <select id="getUser" resultType="User">
+        select uid,
+            userID,
+            username,
+            password,
+            email,
+            createTime,
+            updateTime,
+            perms,
+            roles,
+            state
+        from
+            user
+        limit #{page}, #{pageSize}
+    </select>
+
+    <select id="getUserTotal" resultType="Integer">
+        select count(*) from user
+    </select>
+
+    <select id="findUser" resultType="User">
+        select uid,
+            userID,
+            username,
+            password,
+            email,
+            createTime,
+            updateTime,
+            perms,
+            roles,
+            autoLogin,
+            state
+        from
+            user
+        <where>
+            <if test="username != null and username != ''">
+                username=#{username}
+            </if>
+            <if test="password != null and password != ''">
+                and password=#{password}
+            </if>
+        </where>
+    </select>
+
+    <select id="findUserByUid" resultType="User">
+        select uid,
+            userID,
+            username,
+            password,
+            email,
+            createTime,
+            updateTime,
+            perms,
+            roles,
+            state
+        from
+            user
+        where
+            userID=#{uid}
+    </select>
+
+    <select id="checkLogin" resultType="UserLogin">
+        select user_id,
+            token
+        from
+            user_login
+        where
+            user_id=#{uid}
+    </select>
+
+    <update id="updateToken">
+        update user_login
+        set
+            token=#{newToken}
+        where
+            user_id=#{user_id}
+    </update>
+
+    <insert id="loginToken">
+        replace into user_login(user_id, token) values(#{uid}, #{token})
+    </insert>
+
     <insert id="registerUser" parameterType="User">
         insert into user(userID, username, password, email, state, createTime)
         values(
@@ -26,18 +123,187 @@
     </insert>
 
     <select id="toLogin" parameterType="User" resultType="User">
-        select userID, username, email, skill, introduce, avatar, background, state, createTime, updateTime
-        from user
+        select userID,
+            username,
+            email,
+            skill,
+            introduce,
+            avatar,
+            background,
+            state,
+            createTime,
+            updateTime
+        from
+            user
         <where>
             username=#{username} and password=#{password} and state='1'
         </where>
     </select>
 
     <select id="checkOldPassW" parameterType="String" resultType="String">
-        select password from user where password=#{oldPassword} limit 1
+        select password
+        from
+            user
+        where
+            password=#{oldPassword} limit 1
     </select>
 
     <update id="updatePassword" parameterType="User">
-        update user set password=#{newPassword} where username=#{username}
+        update
+            user
+        set
+            password=#{newPassword}
+        where
+            username=#{username}
     </update>
+
+    <update id="editUser" parameterType="User">
+        update
+            user
+        set
+            username=#{username},
+            email=#{email},
+            perms=#{perms},
+            roles=#{roles}
+        <where>
+            <if test="userID != null and userID != ''">
+                userID=#{userID}
+            </if>
+        </where>
+    </update>
+
+    <delete id="delUser" parameterType="String">
+        delete from
+            user
+        <where>
+            <if test="user_id != null and user_id != ''">
+                userID=#{user_id}
+            </if>
+        </where>
+    </delete>
+
+    <update id="updateUser" parameterType="String">
+        update
+            user
+        set
+            autoLogin=#{autoLogin}
+        where
+            userID=#{userID}
+    </update>
+
+    <select id="getLoginData" parameterType="String" resultType="User">
+        select
+            username,
+            password
+        from
+            user
+        where
+            userID=#{user_id}
+    </select>
+
+    <insert id="setUserPerms" parameterType="Perms">
+        replace
+        into
+            user_perms(permsName, permsDesc)
+        values(
+        <if test="permsName != null and permsName != ''">
+            #{permsName},
+        </if>
+        <if test="permsDesc != null and permsDesc !=''">
+            #{permsDesc}
+        </if>)
+    </insert>
+
+    <insert id="setUserRoles" parameterType="Roles">
+        replace
+        into
+        user_roles(rolesName, rolesDesc)
+        values(
+        <if test="rolesName != null and rolesName != ''">
+            #{rolesName},
+        </if>
+        <if test="rolesDesc != null and rolesDesc !=''">
+            #{rolesDesc}
+        </if>)
+    </insert>
+
+    <select id="getPerms" parameterType="String" resultType="Perms">
+        select permsName,
+            permsDesc
+        from
+            user_perms
+    </select>
+
+    <select id="getRoles" parameterType="String" resultType="Roles">
+        select rolesName,
+            rolesDesc
+        from
+            user_roles
+    </select>
+
+    <insert id="addAccount" parameterType="User">
+        insert into user(userID, username, password, email, state, createTime, perms, roles)
+        values(
+        <if test="userID != null and userID !=''">
+            #{userID},
+        </if>
+        <if test="username != null and username !=''">
+            #{username},
+        </if>
+        <if test="password != null and password !=''">
+            #{password},
+        </if>
+        <if test="email != null and email !=''">
+            #{email},
+        </if>
+        <if test="state != null and state !=''">
+            #{state},
+        </if>
+        <if test="createTime != null and createTime !=''">
+            #{createTime},
+        </if>
+        <if test="perms != null and perms != ''">
+            #{perms},
+        </if>
+        <if test="roles != null and roles != ''">
+            #{roles}
+        </if>
+        )
+    </insert>
+
+    <select id="checkEmail" parameterType="String" resultType="User">
+        select email from user where email=#{email}
+    </select>
+
+    <select id="getAllPerms" resultType="Perms">
+        select permsName,
+            permsDesc
+        from
+            user_perms
+        limit #{page}, #{pageSize}
+    </select>
+
+    <select id="getAllRoles" resultType="Roles">
+        select rolesName,
+            rolesDesc
+        from
+            user_roles
+        limit #{page}, #{pageSize}
+    </select>
+
+    <select id="getPermsTotal" resultType="Integer">
+        select count(*) from user_perms
+    </select>
+
+    <select id="getRolesTotal" resultType="Integer">
+        select count(*) from user_roles
+    </select>
+
+    <delete id="delPerms" parameterType="String">
+        delete from user_perms where permsName=#{permsName}
+    </delete>
+
+    <delete id="delRoles" parameterType="String">
+        delete from user_roles where rolesName=#{rolesName}
+    </delete>
 </mapper>

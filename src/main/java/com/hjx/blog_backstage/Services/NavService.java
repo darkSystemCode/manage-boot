@@ -2,23 +2,25 @@ package com.hjx.blog_backstage.Services;
 
 import com.hjx.blog_backstage.Entitys.ChildNav;
 import com.hjx.blog_backstage.Entitys.Nav;
-import com.hjx.blog_backstage.Mappers.navMapper;
+import com.hjx.blog_backstage.Mappers.NavMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-public class navService {
+public class NavService {
     @Autowired
-    private navMapper navMapper;
+    private NavMapper navMapper;
 
     public Integer setNav(Nav nav) {
         return navMapper.setNav(nav);
     }
 
     public List<Nav> getNav() {
-        return navMapper.getNav();
+        List<Nav> navList = navMapper.getNav();
+        return navList;
     }
 
     public Integer setChildNav(ChildNav childNav) {
@@ -39,5 +41,25 @@ public class navService {
             item.setChildren(childNav);
         }
         return homeNav;
+    }
+
+    public Integer deleteParentNav(Integer id) {
+        return navMapper.deleteParentNav(id);
+    }
+
+    public Integer deleteChildNav(Integer id, Integer parentId) {
+        return navMapper.deleteChildNav(id, parentId);
+    }
+
+    @Transactional
+    public Integer deleteAllNav(Integer parentId) {
+        Integer integer = navMapper.deleteChildNav(null, parentId);
+        if(integer > 0) {
+            Integer integer1 = navMapper.deleteParentNav(parentId);
+            if(integer1 > 0) {
+                return integer1;
+            }
+        }
+        return 0;
     }
 }

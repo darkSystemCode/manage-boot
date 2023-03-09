@@ -16,6 +16,17 @@ spring:
     username: 154954264@qq.com
     password: mbcmmzxnmezucbdg
     default-encoding: utf-8
+    #redis
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password:
+      lettuce:
+        pool:
+          max-active: 8
+          max-await: -1
+          max-idle: 8
+          min-idle: 0
 
 #mybatis
 mybatis:
@@ -25,3 +36,6 @@ logging:
   config: classpath:logback-boot.xml
 
 email: 154954264
+
+jwt:
+  token_expired: 1296000000

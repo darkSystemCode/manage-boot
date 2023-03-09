@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface navMapper {
+public interface NavMapper {
 
     public Integer setNav(Nav nav);
 
@@ -20,4 +20,10 @@ public interface navMapper {
     public List<Nav> getHomeNav();
 
     public List<ChildNav> getHomeNavChild();
+
+    public Integer deleteParentNav(Integer id);
+
+    public Integer deleteChildNav(Integer id, Integer parentId);
+
+    public Integer deleteAllNav(Integer id);
 }

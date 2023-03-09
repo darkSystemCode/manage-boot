@@ -1,15 +1,14 @@
 package com.hjx.blog_backstage.Services;
 
-import com.hjx.blog_backstage.Entitys.ArticleOther;
 import com.hjx.blog_backstage.Entitys.Mine;
-import com.hjx.blog_backstage.Mappers.mineMapper;
+import com.hjx.blog_backstage.Mappers.MineMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class mineService {
+public class MineService {
     @Autowired
-    private mineMapper mineMapper;
+    private MineMapper mineMapper;
 
     public Integer setMine(Mine mine) {
         return mineMapper.setMine(mine);
